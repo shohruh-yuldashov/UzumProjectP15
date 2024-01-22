@@ -1,5 +1,5 @@
 import enum
-import datetime
+from datetime import datetime
 
 from sqlalchemy import (
     Table,
@@ -51,7 +51,7 @@ delivery = Table(
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
-    Column('status', Integer)
+    Column('status', Integer, ForeignKey('status.id'))
 )
 
 
@@ -66,48 +66,76 @@ credit = Table(
 )
 
 
-
-question = Table(
-    'question_and_answer',
+shopping_cart = Table(
+    'shopping_cart',
     metadata,
-    Column('id',Integer,primary_key=True,autoincrement=True),
-    Column('question',Text),
-    Column('answer',Text),
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('product_id', Integer, ForeignKey('products.id')),
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('expires_at', DateTime),
+    Column('count', Integer),
 )
 
-location = Table(
-    'location',
+
+promocodes = Table(
+    'promocodes',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
-    Column('city_id', Integer, ForeignKey('city.id')),
-    Column('region_id', Integer, ForeignKey('regions.id')),
+    Column('date', DateTime)
 )
 
 
-city = Table(
-    'city',
-    metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('name', Text),
-)
-
-regions = Table(
-    'region',
+categories = Table(
+    'categories',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
 )
 
 
+subcategories = Table(
+    'subcategories',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', Text),
+)
 
-order = Table(
-    'order',
+
+category_products = Table(
+    'category_products',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('product_id', Integer, ForeignKey('products.id')),
+    Column('category_id', Integer, ForeignKey('categories.id')),
+    Column('subcategory_id', Integer, ForeignKey('subcategories.id'))
+)
+
+
+status = Table(
+    'status',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', Integer),
+)
+
+
+like = Table(
+    'like',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
-    Column('location_id', Integer, ForeignKey('location.id')),
-    Column('created_at', datetime.utcnow),
+    Column('created_at', default=datetime.utcnow),
+)
+
+comment = Table(
+    'comment',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('product_id', Integer, ForeignKey('products.id')),
+    Column('comment', Text),
+    Column('created_at', default=datetime.utcnow),
 )
 
