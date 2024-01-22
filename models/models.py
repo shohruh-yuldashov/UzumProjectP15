@@ -62,6 +62,7 @@ credit = Table(
     Column('deadline', DateTime),
 )
 
+
 shopping_cart = Table(
     'shopping_cart',
     metadata,
@@ -71,6 +72,7 @@ shopping_cart = Table(
     Column('expires_at', DateTime),
     Column('count', Integer),
 )
+
 
 question = Table(
     'question_and_answer',
@@ -88,6 +90,7 @@ promocodes = Table(
     Column('date', DateTime)
 )
 
+
 # categories = Table(
 #     'categories',
 
@@ -97,6 +100,7 @@ city = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
 )
+
 
 # subcategories = Table(
 #     'subcategories',
@@ -108,6 +112,7 @@ regions = Table(
     Column('name', Text),
 )
 
+  
 category_products = Table(
     'category_products',
     metadata,
@@ -123,6 +128,7 @@ status = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Integer),
 )
+
 
 # like = Table(
 #     'like',
