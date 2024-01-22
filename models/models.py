@@ -79,7 +79,8 @@ question = Table(
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('question', Text),
-    Column('answer', Text)
+    Column('answer', Text),
+    Column('answer', Text),
 )
 
 
@@ -92,8 +93,14 @@ promocodes = Table(
 )
 
 
-# categories = Table(
-#     'categories',
+
+categories = Table(
+    'categories',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', )
+)
+
 
 city = Table(
     'city',
@@ -104,12 +111,15 @@ city = Table(
 
 
 
-# subcategories = Table(
-#     'subcategories',
+subcategories = Table(
+    'subcategories',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', )
+)
 
 regions = Table(
     'regions',
-
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
@@ -134,15 +144,13 @@ status = Table(
 )
 
 
-# like = Table(
-#     'like',
 order = Table(
     'order',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
-    Column('created_at', datetime.utcnow),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow()),
 )
 
 comment = Table(
