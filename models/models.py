@@ -83,7 +83,6 @@ question = Table(
     Column('answer', Text),
 )
 
-
 promocodes = Table(
     'promocodes',
     metadata,
@@ -118,6 +117,7 @@ subcategories = Table(
     Column('name', )
 )
 
+
 regions = Table(
     'regions',
     metadata,
@@ -125,7 +125,7 @@ regions = Table(
     Column('name', Text),
 )
 
-
+  
 category_products = Table(
     'category_products',
     metadata,
@@ -134,7 +134,6 @@ category_products = Table(
     Column('category_id', Integer, ForeignKey('categories.id')),
     Column('subcategory_id', Integer, ForeignKey('subcategories.id'))
 )
-
 
 status = Table(
     'status',
@@ -151,6 +150,7 @@ order = Table(
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
     Column('created_at', TIMESTAMP, default=datetime.utcnow()),
+    Column('created_at', default=datetime.utcnow),
 )
 
 comment = Table(
