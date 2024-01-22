@@ -32,7 +32,6 @@ users = Table(
     Column('joined_at', TIMESTAMP, default=datetime.utcnow),
 )
 
-
 products = Table(
     'products',
     metadata,
@@ -45,7 +44,6 @@ products = Table(
     Column('created_at', DateTime)
 )
 
-
 delivery = Table(
     'delivery',
     metadata,
@@ -53,7 +51,6 @@ delivery = Table(
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('status', Integer, ForeignKey('status.id'))
 )
-
 
 credit = Table(
     'credit',
@@ -65,6 +62,7 @@ credit = Table(
     Column('deadline', DateTime),
 )
 
+<<<<<<< Updated upstream
 
 shopping_cart = Table(
     'shopping_cart',
@@ -74,6 +72,14 @@ shopping_cart = Table(
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('expires_at', DateTime),
     Column('count', Integer),
+=======
+question = Table(
+    'question_and_answer',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('question', Text),
+    Column('answer', Text),
+>>>>>>> Stashed changes
 )
 
 
@@ -85,22 +91,33 @@ promocodes = Table(
     Column('date', DateTime)
 )
 
+<<<<<<< Updated upstream
 
 categories = Table(
     'categories',
+=======
+city = Table(
+    'city',
+>>>>>>> Stashed changes
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
 )
 
+<<<<<<< Updated upstream
 
 subcategories = Table(
     'subcategories',
+=======
+regions = Table(
+    'regions',
+>>>>>>> Stashed changes
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
 )
 
+<<<<<<< Updated upstream
 
 category_products = Table(
     'category_products',
@@ -122,10 +139,15 @@ status = Table(
 
 like = Table(
     'like',
+=======
+order = Table(
+    'order',
+>>>>>>> Stashed changes
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
+<<<<<<< Updated upstream
     Column('created_at', datetime.utcnow),
 )
 
@@ -138,3 +160,8 @@ comment = Table(
     Column('comment', Text),
     Column('created_at', datetime.utcnow),
 )
+=======
+    Column('location_id', Integer, ForeignKey('location.id')),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow),
+)
+>>>>>>> Stashed changes
