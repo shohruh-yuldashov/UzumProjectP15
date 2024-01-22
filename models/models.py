@@ -1,5 +1,5 @@
 import enum
-from datetime import datetime
+import datetime
 
 from sqlalchemy import (
     Table,
@@ -64,3 +64,51 @@ credit = Table(
     Column('name', Text),
     Column('deadline', DateTime),
 )
+
+
+
+question = Table(
+    'question_and_answer',
+    metadata,
+    Column('id',Integer,primary_key=True,autoincrement=True),
+    Column('question',Text),
+    Column('answer',Text),
+)
+
+location = Table(
+    'location',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', Text),
+    Column('city_id', Integer, ForeignKey('city.id')),
+    Column('region_id', Integer, ForeignKey('regions.id')),
+)
+
+
+city = Table(
+    'city',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', Text),
+)
+
+regions = Table(
+    'region',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', Text),
+)
+
+
+
+order = Table(
+    'order',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('product_id', Integer, ForeignKey('products.id')),
+    Column('location_id', Integer, ForeignKey('location.id')),
+    Column('created_at', datetime.utcnow),
+)
+
+
