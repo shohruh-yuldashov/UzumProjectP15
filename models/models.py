@@ -32,7 +32,6 @@ users = Table(
     Column('joined_at', TIMESTAMP, default=datetime.utcnow),
 )
 
-
 products = Table(
     'products',
     metadata,
@@ -45,7 +44,6 @@ products = Table(
     Column('created_at', DateTime)
 )
 
-
 delivery = Table(
     'delivery',
     metadata,
@@ -53,7 +51,6 @@ delivery = Table(
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('status', Integer, ForeignKey('status.id'))
 )
-
 
 credit = Table(
     'credit',
@@ -65,7 +62,6 @@ credit = Table(
     Column('deadline', DateTime),
 )
 
-
 shopping_cart = Table(
     'shopping_cart',
     metadata,
@@ -76,6 +72,13 @@ shopping_cart = Table(
     Column('count', Integer),
 )
 
+question = Table(
+    'question_and_answer',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('question', Text),
+    Column('answer', Text)
+)
 
 promocodes = Table(
     'promocodes',
@@ -85,22 +88,25 @@ promocodes = Table(
     Column('date', DateTime)
 )
 
+# categories = Table(
+#     'categories',
 
-categories = Table(
-    'categories',
+city = Table(
+    'city',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
 )
 
+# subcategories = Table(
+#     'subcategories',
 
-subcategories = Table(
-    'subcategories',
+regions = Table(
+    'regions',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
 )
-
 
 category_products = Table(
     'category_products',
@@ -111,7 +117,6 @@ category_products = Table(
     Column('subcategory_id', Integer, ForeignKey('subcategories.id'))
 )
 
-
 status = Table(
     'status',
     metadata,
@@ -119,9 +124,10 @@ status = Table(
     Column('name', Integer),
 )
 
-
-like = Table(
-    'like',
+# like = Table(
+#     'like',
+order = Table(
+    'order',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
@@ -136,10 +142,6 @@ comment = Table(
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
     Column('comment', Text),
-    Column('created_at', default=datetime.utcnow),
+    Column('location_id', Integer, ForeignKey('location.id')),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow),
 )
-
-
-
-
-
