@@ -61,7 +61,6 @@ async def login(
 
     redis_client.set(f'{token}', json.dumps({'code': code, 'email': email}), ex=600)
 
-
     send_email_report_dashboard(email, code)
 
     return {'token': token, 'message': 'Please verify your email'}
@@ -78,6 +77,8 @@ async def verify_email(
     if data is None:
         raise HTTPException(status_code=404, detail='Token not found !!!')
 
+    redis_client.delete(f'{token}')
+
     data = json.loads(data)
 
     if data['code'] == code:
@@ -90,8 +91,6 @@ async def verify_email(
             raise HTTPException(status_code=404, detail='User not found !')
 
         token = generate_token(user_data.id)
-
-        redis_client.delete(f'{token}')
 
         return token
 
