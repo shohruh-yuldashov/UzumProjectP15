@@ -172,3 +172,4 @@ comment = Table(
     Column('comment', Text),
     Column('created_at', TIMESTAMP, default=datetime.utcnow)
 )
+
