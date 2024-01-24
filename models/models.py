@@ -87,7 +87,7 @@ promocodes = Table(
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
-    Column('amount', Integer),
+    Column('price', Integer),
     Column('date', DateTime)
 )
 
