@@ -29,7 +29,7 @@ users = Table(
     Column('username', String),
     Column('password', String),
     Column('balance', Float),
-    Column('joined_at', TIMESTAMP, default=datetime.utcnow),
+    Column('joined_at', TIMESTAMP, default=datetime.utcnow)
 )
 
 products = Table(
@@ -59,7 +59,7 @@ credit = Table(
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
     Column('name', Text),
-    Column('deadline', DateTime),
+    Column('deadline', DateTime)
 )
 
 
@@ -70,7 +70,7 @@ shopping_cart = Table(
     Column('product_id', Integer, ForeignKey('products.id')),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('expires_at', DateTime),
-    Column('count', Integer),
+    Column('count', Integer)
 )
 
 
@@ -94,14 +94,14 @@ categories = Table(
     'categories',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('name', Text),
+    Column('name', Text)
 )
 
 city = Table(
     'city',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('name', Text),
+    Column('name', Text)
 )
 
 subcategories = Table(
@@ -116,7 +116,7 @@ regions = Table(
     'regions',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('name', Text),
+    Column('name', Text)
 )
 
   
@@ -133,7 +133,7 @@ status = Table(
     'status',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('name', Integer),
+    Column('name', Integer)
 )
 
 like = Table(
@@ -142,7 +142,7 @@ like = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
-    Column('created_at', DateTime, default=datetime.utcnow),
+    Column('created_at', DateTime, default=datetime.utcnow)
 )
 
 order = Table(
@@ -151,7 +151,16 @@ order = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
-    Column('created_at', default=datetime.utcnow),
+    Column('created_at', default=datetime.utcnow)
+)
+
+locations = Table(
+    'locations',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', Text),
+    Column('city_id', Integer, ForeignKey('city.id')),
+    Column('region_id', Integer, ForeignKey('regions.id'))
 )
 
 comment = Table(
@@ -161,6 +170,5 @@ comment = Table(
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
     Column('comment', Text),
-    Column('location_id', Integer, ForeignKey('location.id')),
-    Column('created_at', TIMESTAMP, default=datetime.utcnow),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow)
 )
