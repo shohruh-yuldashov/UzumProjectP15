@@ -13,7 +13,7 @@ from sqlalchemy import (
     ForeignKey,
     DECIMAL,
     UniqueConstraint,
-    Enum, Float, DateTime
+    Enum, Float, DateTime, TIME
 )
 from sqlalchemy.orm import relationship
 
@@ -102,7 +102,8 @@ city = Table(
     'city',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('name', Text)
+    Column('name', Text),
+    Column('region_id', Integer, ForeignKey('regions.id'))
 )
 
 subcategories = Table(
@@ -160,8 +161,13 @@ locations = Table(
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
+    Column('longitude', Float),
+    Column('latitude', Float),
     Column('city_id', Integer, ForeignKey('city.id')),
-    Column('region_id', Integer, ForeignKey('regions.id'))
+    Column('opens_at', TIME),
+    Column('closes_at', TIME),
+    Column('has_dressing_room', Boolean, default=False)
+
 )
 
 comment = Table(
