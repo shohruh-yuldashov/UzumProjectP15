@@ -52,16 +52,22 @@ delivery = Table(
     Column('status', Integer, ForeignKey('status.id'))
 )
 
+
+class CreditEnum(enum.Enum):
+    month_12 = 12
+    month_6 = 6
+    month_3 = 3
+
+
 credit = Table(
     'credit',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
-    Column('name', Text),
+    Column('name', Enum(CreditEnum)),
     Column('deadline', DateTime),
 )
-
 
 shopping_cart = Table(
     'shopping_cart',
@@ -72,7 +78,6 @@ shopping_cart = Table(
     Column('expires_at', DateTime),
     Column('count', Integer),
 )
-
 
 question = Table(
     'question_and_answer',
@@ -90,7 +95,6 @@ promocodes = Table(
     Column('date', DateTime)
 )
 
-
 # categories = Table(
 #     'categories',
 
@@ -100,7 +104,6 @@ city = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
 )
-
 
 # subcategories = Table(
 #     'subcategories',
@@ -112,7 +115,6 @@ regions = Table(
     Column('name', Text),
 )
 
-  
 category_products = Table(
     'category_products',
     metadata,
@@ -129,7 +131,6 @@ status = Table(
     Column('name', Integer),
 )
 
-
 # like = Table(
 #     'like',
 order = Table(
@@ -138,7 +139,7 @@ order = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
-    Column('created_at', default=datetime.utcnow),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow),
 )
 
 comment = Table(
