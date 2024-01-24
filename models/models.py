@@ -90,9 +90,12 @@ promocodes = Table(
     Column('date', DateTime)
 )
 
-
-# categories = Table(
-#     'categories',
+categories = Table(
+    'categories',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', Text),
+)
 
 city = Table(
     'city',
@@ -101,9 +104,13 @@ city = Table(
     Column('name', Text),
 )
 
-
-# subcategories = Table(
-#     'subcategories',
+subcategories = Table(
+    'subcategories',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('name', Integer),
+    Column('price', Integer)
+)
 
 regions = Table(
     'regions',
@@ -129,9 +136,15 @@ status = Table(
     Column('name', Integer),
 )
 
+like = Table(
+    'like',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('product_id', Integer, ForeignKey('products.id')),
+    Column('created_at', DateTime, default=datetime.utcnow),
+)
 
-# like = Table(
-#     'like',
 order = Table(
     'order',
     metadata,
