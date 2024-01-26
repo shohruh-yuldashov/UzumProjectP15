@@ -30,7 +30,7 @@ from models.models import *
 
 
 from auth.auth import register_router
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 app = FastAPI(title='Uzum', version='1.0.0')
@@ -168,6 +168,68 @@ async def add_cart(
 
 
 
+
+@router.get('/cart')
+async def get_cart(
+        token: dict = Depends(verify_token),
+        session: AsyncSession = Depends(get_async_session)
+):
+    if token is None:
+        raise HTTPException(status_code=403, detail='Forbidden')
+    userid = token.get('user_id')
+
+    query = select(shopping_cart).where(shopping_cart.c.user_id == userid)
+    cart_data = await session.execute(query)
+    cart_items = cart_data.fetchall()
+
+    if not cart_items:
+        return {'success': True, 'message': 'Cart is empty', 'cart': []}
+
+    cart = []
+    for item in cart_items:
+        cart.append({
+            'product_id': item.product_id,
+            'quantity': item.count,
+        })
+
+    return {'success': True, 'cart': cart}
+
+
+
+
+
+
+@router.delete('/delete_cart')
+async def delete_cart_item(
+        product_id: int,
+        token: dict = Depends(verify_token),
+        session: AsyncSession = Depends(get_async_session)
+):
+    if token is None:
+        raise HTTPException(status_code=403, detail='Forbidden')
+    userid = token.get('user_id')
+
+    query = select(shopping_cart).where(
+        (shopping_cart.c.user_id == userid) & (shopping_cart.c.product_id == product_id)
+    )
+    cart_data = await session.execute(query)
+    cart_item = cart_data.fetchone()
+
+    if cart_item is None:
+        raise HTTPException(status_code=404, detail='Item not found in the cart')
+
+    query_delete = delete(shopping_cart).where(
+        (shopping_cart.c.user_id == userid) & (shopping_cart.c.product_id == product_id)
+    )
+    await session.execute(query_delete)
+    await session.commit()
+
+    return {'success': True, 'message': 'Item removed from the cart'}
+
+
+
+
 app.include_router(router, prefix='/main')
 app.include_router(register_router, prefix='/auth')
+
 
