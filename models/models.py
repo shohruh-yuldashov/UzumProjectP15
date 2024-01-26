@@ -152,10 +152,8 @@ order = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
-
-    Column('created_at',TIMESTAMP, default=datetime.utcnow)
-
-    Column('created_at', TIMESTAMP, default=datetime)
+    Column('created_at',TIMESTAMP, default=datetime.utcnow),
+    Column('created_at', TIMESTAMP, default=datetime),
 
 )
 
@@ -180,5 +178,30 @@ comment = Table(
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
     Column('comment', Text),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow)
+)
+
+class PaymentEnum(enum.Enum):
+    active = 'processing'
+    payed = 'payed'
+
+credit_choice = Table(
+    'credit_choice',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('choice', Integer, default=12)
+)
+
+user_payment = Table(
+    'user_payment',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('payment_for_month', Float),
+    Column('payment_price', Float),
+    Column('payed_amount', Float),
+    Column('payed_month', Integer),
+    Column('credit_id', Integer, ForeignKey('credit.id')),
+    Column('status', Enum(PaymentEnum), default=PaymentEnum.active),
     Column('created_at', TIMESTAMP, default=datetime.utcnow)
 )
