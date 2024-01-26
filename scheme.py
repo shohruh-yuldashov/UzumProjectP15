@@ -1,5 +1,5 @@
-import datetime
-
+from datetime import datetime, date, time
+from sqlalchemy import Date
 from pydantic import BaseModel
 
 
@@ -32,7 +32,23 @@ class LocationPostScheme(BaseModel):
     city: int
     longitude: float
     latitude: float
-    opens_at: datetime.time
-    closes_at: datetime.time
+    opens_at: time
+    closes_at: time
     has_dressing_room: bool
+
+
+class ProductCreate(BaseModel):
+    name: str
+    count: int
+    price: float
+    colour: str
+    description: str
+
+
+class ProductInfo(BaseModel):
+    name: str
+    count: int
+    price: float
+    colour: str
+    description: str
 
