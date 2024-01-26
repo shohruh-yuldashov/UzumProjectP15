@@ -72,7 +72,6 @@ async def verify_email(
         code: int,
         session: AsyncSession = Depends(get_async_session)
 ):
-
     data = redis_client.get(f'{token}')
     if data is None:
         raise HTTPException(status_code=404, detail='Token not found !!!')

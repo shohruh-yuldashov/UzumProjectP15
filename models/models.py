@@ -13,7 +13,7 @@ from sqlalchemy import (
     ForeignKey,
     DECIMAL,
     UniqueConstraint,
-    Enum, Float, DateTime
+    Enum, Float, DateTime, Date
 )
 from sqlalchemy.orm import relationship
 
@@ -52,12 +52,12 @@ delivery = Table(
     Column('status', Integer, ForeignKey('status.id'))
 )
 
-
-class CreditEnum(enum.Enum):
-    month_12 = 12
-    month_6 = 6
-    month_3 = 3
-
+credit_choice = Table(
+    'credit_choice',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('choice', Integer, default=12)
+)
 
 credit = Table(
     'credit',
@@ -65,8 +65,28 @@ credit = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
-    Column('name', Enum(CreditEnum)),
-    Column('deadline', DateTime),
+    Column('choice', Integer, ForeignKey('credit_choice.id')),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow),
+)
+
+
+class PaymentEnum(enum.Enum):
+    active = 'processing'
+    payed = 'payed'
+
+
+user_payment = Table(
+    'user_payment',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('payment_for_month', Float),
+    Column('payment_price', Float),
+    Column('payed_amount', Float),
+    Column('payed_month', Integer),
+    Column('credit_id', Integer, ForeignKey('credit.id')),
+    Column('status', Enum(PaymentEnum), default=PaymentEnum.active),
+    Column('created_at', TIMESTAMP, default=datetime.utcnow)
 )
 
 shopping_cart = Table(
@@ -114,15 +134,15 @@ regions = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
 )
-
-category_products = Table(
-    'category_products',
-    metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('product_id', Integer, ForeignKey('products.id')),
-    Column('category_id', Integer, ForeignKey('categories.id')),
-    Column('subcategory_id', Integer, ForeignKey('subcategories.id'))
-)
+#
+# category_products = Table(
+#     'category_products',
+#     metadata,
+#     Column('id', Integer, primary_key=True, autoincrement=True),
+#     Column('product_id', Integer, ForeignKey('products.id')),
+#     Column('category_id', Integer, ForeignKey('categories.id')),
+#     Column('subcategory_id', Integer, ForeignKey('subcategories.id'))
+# )
 
 status = Table(
     'status',
@@ -142,13 +162,13 @@ order = Table(
     Column('created_at', TIMESTAMP, default=datetime.utcnow),
 )
 
-comment = Table(
-    'comment',
-    metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('user_id', Integer, ForeignKey('users.id')),
-    Column('product_id', Integer, ForeignKey('products.id')),
-    Column('comment', Text),
-    Column('location_id', Integer, ForeignKey('location.id')),
-    Column('created_at', TIMESTAMP, default=datetime.utcnow),
-)
+# comment = Table(
+#     'comment',
+#     metadata,
+#     Column('id', Integer, primary_key=True, autoincrement=True),
+#     Column('user_id', Integer, ForeignKey('users.id')),
+#     Column('product_id', Integer, ForeignKey('products.id')),
+#     Column('comment', Text),
+#     Column('location_id', Integer, ForeignKey('location.id')),
+#     Column('created_at', TIMESTAMP, default=datetime.utcnow),
+# )
