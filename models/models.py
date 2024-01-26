@@ -151,7 +151,7 @@ order = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
-    Column('created_at', default=datetime.utcnow)
+    Column('created_at',TIMESTAMP, default=datetime.utcnow)
 )
 
 locations = Table(
