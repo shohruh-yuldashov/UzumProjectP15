@@ -4,13 +4,17 @@ from fastapi import APIRouter, FastAPI
 from typing import List
 
 from fastapi import APIRouter, FastAPI, Depends
+<<<<<<< Updated upstream
 from sqlalchemy import select, insert
 from sqlalchemy.exc import IntegrityError
+=======
+from sqlalchemy import select, insert, update, delete
+>>>>>>> Stashed changes
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.utils import verify_token
 from database import get_async_session
-from scheme import LocationScheme, CityScheme, CityGETScheme, LocationPostScheme
+from scheme import LocationScheme, CityScheme, CityGETScheme, LocationPostScheme, ProductInfo
 
 from models.models import locations, city, regions
 
@@ -18,6 +22,14 @@ from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.params import Depends
 from fastapi.security import oauth2, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
+
+from scheme import ProductCreate
+from models.models import products,user_role
+from auth.utils import verify_token
+from sqlalchemy.ext.asyncio import AsyncSession,async_session
+from sqlalchemy import select,Table, Column, Integer, String, MetaData, DateTime, Float
+from sqlalchemy.exc import SQLAlchemyError
+from fastapi import FastAPI, Depends, HTTPException, status,APIRouter
 
 from auth.utils import verify_token
 from database import get_async_session
@@ -35,10 +47,13 @@ app = FastAPI(title='Uzum', version='1.0.0')
 router = APIRouter()
 
 
+<<<<<<< Updated upstream
 app.include_router(router, prefix='/main')
 app.include_router(register_router)
 
 # app.include_router(product_details)
+=======
+>>>>>>> Stashed changes
 
 
 @app.get('/locations')
@@ -159,6 +174,7 @@ async def add_cart(
     return {'success': True}
 
 
+<<<<<<< Updated upstream
 @router.get('/cart')
 async def get_cart(
         token: dict = Depends(verify_token),
@@ -315,6 +331,137 @@ async def pay_product(
     except Exception as e:
         raise HTTPException(detail=f'{e}', status_code=status.HTTP_400_BAD_REQUEST)
 
+=======
+@router.post("/product")
+async def create_tool(product_create: ProductCreate, session: AsyncSession = Depends(get_async_session),
+                      token: dict = Depends(verify_token)):
+    if token is None:
+        raise HTTPException(status_code=401, detail='Token not provided!')
+>>>>>>> Stashed changes
 
+    user_id = token.get('user_id')
+    result = await session.execute(
+        select(user_role).where(
+            user_role.c.user_id == user_id,
+            user_role.c.role_name == 'admin'
+        )
+    )
+
+    if not result.scalar():
+        raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    try:
+        query = insert(products).values(
+            name=product_create.name,
+            count=product_create.count,
+            price=product_create.price,
+            colour=product_create.colour,
+            description=product_create.description,
+        )
+        await session.execute(query)
+        await session.commit()
+        return {"message": "Product created successfully"}
+    except SQLAlchemyError as e:
+        await session.rollback()
+        raise HTTPException(status_code=500, detail="Database error")
+
+
+@router.get("/product/{product_id}", response_model=ProductInfo)
+async def read_product(product_id: int, session: AsyncSession = Depends(get_async_session),
+                       token: dict = Depends(verify_token)):
+    if token is None:
+        raise HTTPException(status_code=401, detail='Token not provided!')
+
+    user_id = token.get('user_id')
+
+    try:
+        query = select(products).where(products.c.id == product_id)
+        result = await session.execute(query)
+        product = result.one()
+        print(product)
+
+        if product is None:
+            raise HTTPException(status_code=404, detail="Product not found")
+
+        return product
+    except SQLAlchemyError as e:
+        raise HTTPException(status_code=500, detail="Database error")
+
+
+@router.put("/product/{product_id}")
+async def update_product(product_id: int, product_update: ProductCreate,
+                         session: AsyncSession = Depends(get_async_session),
+                         token: dict = Depends(verify_token)):
+    if token is None:
+        raise HTTPException(status_code=401, detail='Token not provided!')
+
+    user_id = token.get('user_id')
+    result = await session.execute(
+        select(user_role).where(
+            user_role.c.user_id == user_id,
+            user_role.c.role_name == 'admin'
+        )
+    )
+
+    if not result.scalar():
+        raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    try:
+        query = update(products).where(products.c.id == product_id).values(
+            name=product_update.name,
+            count=product_update.count,
+            price=product_update.price,
+            colour=product_update.colour,
+            description=product_update.description
+        )
+
+        await session.execute(query)
+        await session.commit()
+
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Product not found")
+
+        return {"message": "Product updated successfully"}
+    except SQLAlchemyError as e:
+        await session.rollback()
+        raise HTTPException(status_code=500, detail="Database error")
+
+
+@router.delete("/product/{product_id}")
+async def delete_product(product_id: int, session: AsyncSession = Depends(get_async_session),
+                         token: dict = Depends(verify_token)):
+    if token is None:
+        raise HTTPException(status_code=401, detail='Token not provided!')
+
+    user_id = token.get('user_id')
+    result = await session.execute(
+        select(user_role).where(
+            user_role.c.user_id == user_id,
+            user_role.c.role_name == 'admin'
+        )
+    )
+
+    if not result.scalar():
+        raise HTTPException(status_code=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    try:
+        query = delete(products).where(products.c.id == product_id)
+        result = await session.execute(query)
+        await session.commit()
+
+        if result.rowcount == 0:
+            raise HTTPException(status_code=404, detail="Product not found")
+
+        return {"message": "Product deleted successfully"}
+    except SQLAlchemyError as e:
+        await session.rollback()
+        raise HTTPException(status_code=500, detail="Database error")
+
+@router.get("/all-products",response_model=List[ProductInfo])
+async def all_products(session: AsyncSession=Depends(get_async_session)):
+    query = select(products)
+    qalesan =await session.execute(query)
+    data = qalesan.fetchall()
+    return data
 app.include_router(router, prefix='/main')
 app.include_router(register_router, prefix='/auth')

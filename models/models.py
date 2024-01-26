@@ -41,7 +41,7 @@ products = Table(
     Column('price', Float),
     Column('colour', Text),
     Column('description', String),
-    Column('created_at', DateTime)
+    Column('created_at', TIMESTAMP, default=datetime.utcnow)
 )
 
 delivery = Table(
@@ -181,6 +181,7 @@ comment = Table(
     Column('created_at', TIMESTAMP, default=datetime.utcnow)
 )
 
+<<<<<<< Updated upstream
 class PaymentEnum(enum.Enum):
     active = 'processing'
     payed = 'payed'
@@ -204,4 +205,23 @@ user_payment = Table(
     Column('credit_id', Integer, ForeignKey('credit.id')),
     Column('status', Enum(PaymentEnum), default=PaymentEnum.active),
     Column('created_at', TIMESTAMP, default=datetime.utcnow)
+=======
+
+class LifeTimeEnum(enum.Enum):
+    month = 'month'
+    year = 'year'
+
+
+class RoleEnum(enum.Enum):
+    admin = 'Admin'
+    user = 'User'
+
+
+user_role = Table(
+    'user_role',
+    metadata,
+    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('role_name', Enum(RoleEnum), default='user'),
+    Column('user_id', ForeignKey('users.id'))
+>>>>>>> Stashed changes
 )
