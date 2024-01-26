@@ -13,7 +13,7 @@ from sqlalchemy import (
     ForeignKey,
     DECIMAL,
     UniqueConstraint,
-    Enum, Float, DateTime
+    Enum, Float, DateTime, TIME
 )
 from sqlalchemy.orm import relationship
 
@@ -69,7 +69,7 @@ shopping_cart = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('product_id', Integer, ForeignKey('products.id')),
     Column('user_id', Integer, ForeignKey('users.id')),
-    Column('expires_at', DateTime),
+    Column('expires_at', TIMESTAMP, default=datetime.utcnow),
     Column('count', Integer)
 )
 
@@ -87,6 +87,7 @@ promocodes = Table(
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
+    Column('price', Integer),
     Column('date', DateTime)
 )
 
@@ -101,7 +102,8 @@ city = Table(
     'city',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('name', Text)
+    Column('name', Text),
+    Column('region_id', Integer, ForeignKey('regions.id'))
 )
 
 subcategories = Table(
@@ -141,7 +143,7 @@ like = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
-    Column('created_at', DateTime, default=datetime.utcnow)
+    Column('created_at', TIMESTAMP, default=datetime.utcnow)
 )
 
 order = Table(
@@ -150,7 +152,11 @@ order = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', Integer, ForeignKey('users.id')),
     Column('product_id', Integer, ForeignKey('products.id')),
+
     Column('created_at',TIMESTAMP, default=datetime.utcnow)
+
+    Column('created_at', TIMESTAMP, default=datetime)
+
 )
 
 locations = Table(
@@ -158,8 +164,13 @@ locations = Table(
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
+    Column('longitude', Float),
+    Column('latitude', Float),
     Column('city_id', Integer, ForeignKey('city.id')),
-    Column('region_id', Integer, ForeignKey('regions.id'))
+    Column('opens_at', TIME),
+    Column('closes_at', TIME),
+    Column('has_dressing_room', Boolean, default=False)
+
 )
 
 comment = Table(
