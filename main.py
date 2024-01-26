@@ -1,3 +1,4 @@
+
 from typing import List
 
 from fastapi import APIRouter, FastAPI, Depends
@@ -10,11 +11,28 @@ from scheme import LocationScheme, CityScheme, CityGETScheme, LocationPostScheme
 
 from models.models import locations, city, regions
 
+
+from fastapi import APIRouter, FastAPI, HTTPException
+from fastapi.params import Depends
+from fastapi.security import oauth2, OAuth2PasswordBearer
+from sqlalchemy.orm import Session
+
+from auth.utils import verify_token
+from database import get_async_session
+from schemes import *
+from sqlalchemy import insert
+
+from models.models import *
+
+
 from auth.auth import register_router
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 app = FastAPI(title='Uzum', version='1.0.0')
 
 router = APIRouter()
+
 
 
 app.include_router(router, prefix='/main')
@@ -112,4 +130,37 @@ async def get_city(
     return city_data
 
 
+
+User = users
+
+
+
+
+@router.post('/add-cart')
+async def add_cart(
+        cart_data: CartItem,
+        token: dict = Depends(verify_token),
+        session: AsyncSession = Depends(get_async_session)
+):
+    if token is None:
+        raise HTTPException(status_code=403, detail='Forbidden')
+    userid = token.get('user_id')
+
+    query1 = select(shopping_cart).where(
+        (shopping_cart.c.user_id == userid) & (shopping_cart.c.product_id == cart_data.product_id))
+    cart__data = await session.execute(query1)
+    cartdata = cart__data.fetchall()
+    for item in cartdata:
+        if item[2] == userid and item[1] == cart_data.product_id:
+            return {'success': False, "message": 'Cart already added'}
+
+    query = insert(shopping_cart).values(**dict(cart_data), user_id=userid)
+    await session.execute(query)
+    await session.commit()
+    return {'success': True}
+
+
+
+app.include_router(router, prefix='/main')
+app.include_router(register_router, prefix='/auth')
 
