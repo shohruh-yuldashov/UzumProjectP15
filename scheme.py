@@ -52,3 +52,13 @@ class ProductInfo(BaseModel):
     colour: str
     description: str
 
+
+class PromoDB(BaseModel):
+    name: str
+    price: int
+
+
+class PromoInfo(BaseModel):
+    name: str
+    price: int
+    date: datetime
