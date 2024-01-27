@@ -82,13 +82,20 @@ question = Table(
     Column('answer', Text)
 )
 
+
+class PromoEnum(enum.Enum):
+    expires = "Expires"
+    active = "Active"
+
+
 promocodes = Table(
     'promocodes',
     metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('name', Text),
     Column('price', Integer),
-    Column('date', DateTime)
+    Column('date', TIMESTAMP, default=datetime.utcnow),
+    Column('status', Enum(PromoEnum), default=PromoEnum.active)
 )
 
 categories = Table(
@@ -154,7 +161,7 @@ order = Table(
     Column('product_id', Integer, ForeignKey('products.id')),
     Column('created_at',TIMESTAMP, default=datetime.utcnow),
     Column('created_at', TIMESTAMP, default=datetime),
-
+    Column('created_at', TIMESTAMP, default=datetime.utcnow)
 )
 
 locations = Table(
@@ -181,7 +188,7 @@ comment = Table(
     Column('created_at', TIMESTAMP, default=datetime.utcnow)
 )
 
-<<<<<<< Updated upstream
+
 class PaymentEnum(enum.Enum):
     active = 'processing'
     payed = 'payed'
@@ -205,7 +212,7 @@ user_payment = Table(
     Column('credit_id', Integer, ForeignKey('credit.id')),
     Column('status', Enum(PaymentEnum), default=PaymentEnum.active),
     Column('created_at', TIMESTAMP, default=datetime.utcnow)
-=======
+)
 
 class LifeTimeEnum(enum.Enum):
     month = 'month'
@@ -223,5 +230,4 @@ user_role = Table(
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('role_name', Enum(RoleEnum), default='user'),
     Column('user_id', ForeignKey('users.id'))
->>>>>>> Stashed changes
 )

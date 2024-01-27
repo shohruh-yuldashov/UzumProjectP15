@@ -4,19 +4,17 @@ from fastapi import APIRouter, FastAPI
 from typing import List
 
 from fastapi import APIRouter, FastAPI, Depends
-<<<<<<< Updated upstream
-from sqlalchemy import select, insert
+from http.client import HTTPException
+from psycopg2 import IntegrityError
 from sqlalchemy.exc import IntegrityError
-=======
 from sqlalchemy import select, insert, update, delete
->>>>>>> Stashed changes
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.utils import verify_token
 from database import get_async_session
 from scheme import LocationScheme, CityScheme, CityGETScheme, LocationPostScheme, ProductInfo
+from scheme import LocationScheme, CityScheme, CityGETScheme, LocationPostScheme, PromoDB, PromoInfo
 
-from models.models import locations, city, regions
+from models.models import locations, city, regions, promocodes
 
 from fastapi import APIRouter, FastAPI, HTTPException
 from fastapi.params import Depends
@@ -41,19 +39,50 @@ from models.models import *
 from auth.auth import register_router
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
+from tasks import check_promo_time
 
 app = FastAPI(title='Uzum', version='1.0.0')
 
 router = APIRouter()
 
 
-<<<<<<< Updated upstream
-app.include_router(router, prefix='/main')
-app.include_router(register_router)
+@router.post('/add-promocodes')
+async def add_promocode(
+        new_promo: PromoDB,
+        token: dict = Depends(verify_token),
+        session: AsyncSession = Depends(get_async_session),
+):
+    if token is None:
+        raise HTTPException(status_code=403, detail='Forbidden')
 
-# app.include_router(product_details)
-=======
->>>>>>> Stashed changes
+    try:
+        query = insert(promocodes).values(**dict(new_promo))
+        await session.execute(query)
+        await session.commit()
+    except IntegrityError:
+        raise HTTPException(status_code=400, detail='Promo already exists!')
+    return {'success': True}
+
+
+@router.get('/check-promo', response_model=List[PromoInfo])
+async def check_promo(
+        token: dict = Depends(verify_token),
+        session: AsyncSession = Depends(get_async_session),
+        promocode=str
+):
+    if token is None:
+        raise HTTPException(status_code=403, detail='Forbidden')
+
+    await check_promo_time(session)
+
+    query = select(promocodes).where(promocodes.c.name == promocode)
+    promo_data = await session.execute(query)
+    promodata = promo_data.fetchall()
+    print(promodata)
+    for item in promodata:
+        if item[4].value == 'Active':
+            return promodata
+    raise HTTPException(status_code=400, detail='Your promocode expired!')
 
 
 @app.get('/locations')
@@ -147,7 +176,6 @@ async def get_city(
     return city_data
 
 
-User = users
 
 
 @router.post('/add-cart')
@@ -174,7 +202,6 @@ async def add_cart(
     return {'success': True}
 
 
-<<<<<<< Updated upstream
 @router.get('/cart')
 async def get_cart(
         token: dict = Depends(verify_token),
@@ -331,13 +358,12 @@ async def pay_product(
     except Exception as e:
         raise HTTPException(detail=f'{e}', status_code=status.HTTP_400_BAD_REQUEST)
 
-=======
+
 @router.post("/product")
 async def create_tool(product_create: ProductCreate, session: AsyncSession = Depends(get_async_session),
                       token: dict = Depends(verify_token)):
     if token is None:
         raise HTTPException(status_code=401, detail='Token not provided!')
->>>>>>> Stashed changes
 
     user_id = token.get('user_id')
     result = await session.execute(
